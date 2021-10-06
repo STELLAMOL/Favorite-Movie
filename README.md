@@ -1,57 +1,39 @@
-// # Favorite-Movie
-// A database, store your interesting movie names with the names of lead actor, actress, year of release and the director name. 
+package net.codejava;
 
-package sqlitedemo;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import java.sql.*;
-
-public class DBmain {
+public class DBMain {
 
 	public static void main(String[] args) {
-		
-		
-		
-		insert("Ring Master", "Dileep", "Honey Rose", "2014", "Raffi");
-		
-	}
-	
-	private static void insert(String MovieName, String LeadActor, String LeadActress, String YearofRelease, String DirectorName) {
-		
-		Connection c = DBconnect.connect();
-		
-		PreparedStatement ps = null;
-		
+		String jdbcurl = "jdbc:sqlite:/C:\\SQLite\\sqlite-tools-win32-x86-3360000\\InterestedMovies.db";
 		try {
+			Connection connection = DriverManager.getConnection(jdbcurl);
+			String sql = "SELECT * FROM InterestedMovies";
 			
-			String sql = "INSERT INTO Movies(MovieName, LeadActor, LeadActress, YearofRelease, DirectorName) VALUES(?, ?, ?, ?, ?)";
+			Statement statement = connection.createStatement();
 			
-			ps = c.prepareStatement(sql);
+			ResultSet result = statement.executeQuery(sql);
 			
-			ps.setString(1, MovieName);
+			while (result.next()) {
+				String movie_name = result.getString("movie_name");
+				String name_of_lead_actor = result.getString("name_of_lead_actor");
+				String actress = result.getString("actress");
+				Integer year_of_release = result.getInt("year_of_release");
+				String director_name = result.getString("director_name");
+				
+				System.out.println(movie_name + "|" + name_of_lead_actor + "|" + actress + "|" + year_of_release + "|" + director_name);
+			}
 			
-			ps.setString(2, LeadActor);
-			
-			ps.setString(3, LeadActress);
-			
-			ps.setString(4, YearofRelease);
-			
-			ps.setString(5, DirectorName);
-			
-			ps.execute();
-			
-			System.out.println("Data has been inserted");
-			
-		}catch(Exception e) {
-			
-			System.out.println(e.toString());
-			
+		} catch (SQLException e) {
+			System.out.println("Error connecting to SQLite database");
+			e.printStackTrace();
 		}
 		
-	}
 
-	private static PreparedStatement setString(int i, String movieName) {
-		
-		return null;
 	}
 
 }
